@@ -906,6 +906,66 @@ function drawKid(x,y,ang,moving,t,hurt,gender){
   ctx.restore();
 }
 
+/* 김하나 담임목사님 (안경) - 하이파이브 NPC */
+function drawPastor(pt,camX,camY,t){
+  const x=pt.x-camX,y=pt.y-camY;
+  ELL(x,y+24,22,8,'rgba(0,0,0,.28)');
+  const bob=Math.sin(t/200+pt.seed)*2;
+  ctx.save();ctx.translate(x,y+bob);
+  const hi=pt.hiT>0;
+  // shoes + legs
+  ctx.fillStyle='#2a2a33';RR(-10,8,8,12,3);ctx.fill();RR(2,8,8,12,3);ctx.fill();
+  ELL(-6,21,7,4.5,'#1a1a20');ELL(6,21,7,4.5,'#1a1a20');
+  // navy suit
+  ctx.fillStyle='#2e3a5c';RR(-14,-18,28,28,9);ctx.fill();
+  // white shirt + red tie
+  ctx.fillStyle='#fff';
+  ctx.beginPath();ctx.moveTo(-6,-18);ctx.lineTo(6,-18);ctx.lineTo(0,-6);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#d93a3a';
+  ctx.beginPath();ctx.moveTo(-3.5,-16);ctx.lineTo(3.5,-16);ctx.lineTo(0,-4);ctx.closePath();ctx.fill();
+  // cross pin
+  ctx.fillStyle='#ffd93d';RR(-12,-12,4,10,1);ctx.fill();RR(-14.5,-9.5,9,3.5,1);ctx.fill();
+  // arms
+  if(hi){
+    ctx.save();ctx.translate(14,-14);ctx.rotate(-2.4);
+    ctx.fillStyle='#2e3a5c';RR(-4,-4,8,22,4);ctx.fill();
+    CIR(0,-8,5,'#ffd9b3');
+    ctx.restore();
+    ELL(-14,-8,5.5,8,'#2e3a5c');CIR(-14,-1,4,'#ffd9b3');
+  }else{
+    const wv=Math.sin(t/300+pt.seed)*3;
+    ELL(-15,-8+wv*0.3,5.5,8,'#2e3a5c');ELL(15,-8-wv*0.3,5.5,8,'#2e3a5c');
+    CIR(-15,-1+wv*0.3,4,'#ffd9b3');CIR(15,-1-wv*0.3,4,'#ffd9b3');
+  }
+  // head
+  ctx.fillStyle='#ffd9b3';ctx.beginPath();ctx.arc(0,-34,16,0,TAU);ctx.fill();
+  // neat hair with gray sides
+  ctx.fillStyle='#3a3a42';
+  ctx.beginPath();ctx.arc(0,-36,16,Math.PI*1.02,Math.PI*1.98);ctx.fill();
+  ctx.fillStyle='#8a8a94';
+  RR(-16,-38,5,10,2);ctx.fill();RR(11,-38,5,10,2);ctx.fill();
+  // GLASSES
+  ctx.strokeStyle='#1a1a1a';ctx.lineWidth=2.6;
+  ctx.strokeRect(-11.5,-40,10,8);ctx.strokeRect(1.5,-40,10,8);
+  ctx.beginPath();ctx.moveTo(-1.5,-36);ctx.lineTo(1.5,-36);ctx.stroke();
+  CIR(-6.5,-36,1.8,'#222');CIR(6.5,-36,1.8,'#222');
+  // warm smile
+  ctx.strokeStyle='#8a3a2a';ctx.lineWidth=2.2;ctx.lineCap='round';
+  ctx.beginPath();ctx.arc(0,-30,6,0.3,Math.PI-0.3);ctx.stroke();
+  CIR(-11,-29,2.8,'rgba(255,120,150,.45)');CIR(11,-29,2.8,'rgba(255,120,150,.45)');
+  ctx.restore();
+  // name tag
+  ctx.font='bold 12px sans-serif';ctx.textAlign='center';
+  const label='김하나 목사님';
+  const tw=ctx.measureText(label).width;
+  ctx.fillStyle='rgba(10,14,28,.75)';RR(x-tw/2-14,y-74,tw+28,22,11);ctx.fill();
+  ctx.fillStyle='#ffe88f';ctx.fillText('👓 '+label,x,y-59);
+  if(hi){
+    ctx.font='34px sans-serif';
+    ctx.fillText('🙌',x,y-88-Math.sin(pt.hiT*10)*4);
+  }
+}
+
 /* pigeon enemies */
 function drawCat(e,camX,camY,t){
   const x=e.x-camX,y=e.y-camY,r=e.r;
@@ -1060,6 +1120,10 @@ function drawMinimap(){
   for(const L of LANDMARKS){
     M.fillStyle='#ffd93d';
     M.beginPath();M.arc(L.x*sx,L.y*sy,3,0,TAU);M.fill();
+  }
+  for(const pt of pastors){
+    M.fillStyle='#7fd4ff';
+    M.beginPath();M.arc(pt.x*sx,pt.y*sy,3,0,TAU);M.fill();
   }
   for(const e of enemies){
     const r=e.type==='finalboss'?5:e.type==='boss'?4:2;
@@ -1331,13 +1395,13 @@ function applyLang(){
 }
 /* ================= 게임 상태 ================= */
 let state='title';
-let player,enemies,bullets,gems,pickups,parts,dnums,mets,ltns;
+let player,enemies,bullets,gems,pickups,parts,dnums,mets,ltns,pastors;
 let camX=0,camY=0,shake=0,gameT=0,kills=0,spawnT=0,bossN=0,waveN=0;
 let trainT=-1,trainCd=0,eliteT=25,finalSpawned=false;
 let gameMode='survival',timeLeft=120,score=0,catAnnounced=false;
 let catKills=0,bossCatSpawned=false,endingT=0,endingCat=null;
 let endClouds=[],endPetals=[];
-let magnetAll=0,fruitT=10,prayCd=0,bibleUsed=false;
+let magnetAll=0,fruitT=10,prayCd=0,bibleUsed=false,pastorT=25;
 
 const WEAPONS={
   quack:  {name:'📖 말씀의 검',icon:'📖',max:5,desc:'말씀의 검 자동 발사'},
@@ -1399,9 +1463,9 @@ function resetGame(){
   player={x:WORLD_W/2,y:WORLD_H/2,r:16,hp:100,maxhp:100,speed:175,level:1,xp:0,xpNext:6,
     weapons:{quack:1},dmgMul:1,hasteMul:1,magnetR:95,regen:0,ang:0,moving:false,hurtT:0,
     fireT:0,metT:2,zapT:1,frostT:3,orbitA:0,_lionsT:0,gender:chosenGender};
-  enemies=[];bullets=[];gems=[];pickups=[];parts=[];dnums=[];mets=[];ltns=[];
+  enemies=[];bullets=[];gems=[];pickups=[];parts=[];dnums=[];mets=[];ltns=[];pastors=[];
   camX=player.x-LW/2;camY=player.y-LH/2;shake=0;gameT=0;kills=0;spawnT=0;bossN=0;waveN=0;magnetAll=0;pendingLv=0;
-  trainT=-1;trainCd=0;eliteT=25;finalSpawned=false;fruitT=10;prayCd=0;bibleUsed=false;
+  trainT=-1;trainCd=0;eliteT=25;finalSpawned=false;fruitT=10;prayCd=0;bibleUsed=false;pastorT=25;
   timeLeft=120;score=0;catAnnounced=false;catKills=0;bossCatSpawned=false;endingT=0;endingCat=null;endClouds=[];endPetals=[];
   player._jog=null;player._jogCd=0;
   for(const L of LANDMARKS)L.beneCd=0;
@@ -2002,6 +2066,38 @@ function update(dt,t){
     pickups.push({x:clamp(p.x+rnd(-350,350),40,WORLD_W-40),y:clamp(p.y+rnd(-250,250),40,WORLD_H-40),
       kind:'fruit',fk:irnd(0,FRUITS.length-1),seed:rnd(0,TAU),life:30});
   }
+  // 김하나 목사님 (하이파이브 NPC)
+  pastorT-=dt;
+  if(pastorT<=0&&pastors.length===0){
+    pastorT=50;
+    const pa=rnd(0,TAU),pd=rnd(450,650);
+    pastors.push({x:clamp(p.x+Math.cos(pa)*pd,60,WORLD_W-60),y:clamp(p.y+Math.sin(pa)*pd,60,WORLD_H-60),
+      seed:rnd(0,TAU),dir:rnd(0,TAU),dirT:2,life:70,hiT:0,cool:0,leave:false});
+    toast('👓 김하나 목사님이 근처에 계세요!');
+  }
+  for(let i=pastors.length-1;i>=0;i--){
+    const pt=pastors[i];
+    pt.life-=dt;pt.dirT-=dt;pt.cool-=dt;
+    if(pt.hiT>0){pt.hiT-=dt;if(pt.hiT<=0){pt.leave=true;pt.life=Math.min(pt.life,8);}}
+    if(pt.dirT<=0){pt.dirT=rnd(2,4);pt.dir=rnd(0,TAU);}
+    const psp=pt.leave?95:42;
+    pt.x=clamp(pt.x+Math.cos(pt.dir)*psp*dt,40,WORLD_W-40);
+    pt.y=clamp(pt.y+Math.sin(pt.dir)*psp*dt,40,WORLD_H-40);
+    if(pt.hiT<=0&&pt.cool<=0&&!pt.leave){
+      const dx=p.x-pt.x,dy=p.y-pt.y;
+      if(dx*dx+dy*dy<85*85){
+        pt.hiT=1.4;pt.cool=30;
+        p.hp=Math.min(p.maxhp,p.hp+30);
+        p.dmgMul*=1.5;p._dmgT=8;
+        waveBanner('🙌 김하나 목사님과 하이파이브!');
+        dnums.push({x:p.x,y:p.y-44,txt:'🙌 축복 +30',t:1.1,col:'#ffd93d'});
+        boomParts((p.x+pt.x)/2,(p.y+pt.y)/2,'#ffd93d',16);
+        boomParts((p.x+pt.x)/2,(p.y+pt.y)/2,'#ff9ecf',10);
+        sLv();
+      }
+    }
+    if(pt.life<=0)pastors.splice(i,1);
+  }
   // bombs (rarer, big damage)
   if(Math.random()<dt*0.012){
     pickups.push({x:clamp(p.x+rnd(-450,450),40,WORLD_W-40),y:clamp(p.y+rnd(-350,350),40,WORLD_H-40),
@@ -2060,6 +2156,11 @@ function render(t){
   for(const a of actors){
     const x=a.e.x-camX,y=a.e.y-camY;
     if(x>-80&&x<LW+80&&y>-80&&y<LH+80)drawEnemy(a.e,camX,camY,t);
+  }
+  // pastors (friendly)
+  for(const pt of pastors){
+    const px2=pt.x-camX,py2=pt.y-camY;
+    if(px2>-80&&px2<LW+80&&py2>-100&&py2<LH+100)drawPastor(pt,camX,camY,t);
   }
   // ghibli clouds & petals (behind actors)
   if(state==='ending'){
