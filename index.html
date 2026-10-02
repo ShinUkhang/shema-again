@@ -300,7 +300,7 @@ const decor=[];
 })();
 const pond={x:WORLD_W*0.72,y:WORLD_H*0.3,rx:150,ry:95};
 const LANDMARKS=[
-  {f:'church',x:1400,y:1100,label:'\u26EA 명성교회',beneCd:0,br:320,cr:420,sy:135},
+  {f:'church',x:1400,y:1100,label:'\u26EA 명성교회',beneCd:0,br:320,cr:760,sy:135},
   {f:'st_myeongil',x:420,y:260,label:'\uD83D\uDE87 명일역',beneCd:0},
   {f:'st_gubeun',x:2130,y:1660,label:'\uD83D\uDE87 굽은다리역',beneCd:0},
   {f:'eco',x:900,y:1050,label:'\uD83C\uDF33 길동생태공원',beneCd:0,br:170,cr:300,sy:90},
@@ -640,52 +640,60 @@ function drawChurch(px,py,t){
   ctx.save();ctx.translate(px,py);
   // green hill mound
   ctx.fillStyle='#7cc46a';
-  ctx.beginPath();ctx.ellipse(0,60,330,120,0,0,TAU);ctx.fill();
+  ctx.beginPath();ctx.ellipse(0,60,340,125,0,0,TAU);ctx.fill();
   ctx.fillStyle='#6ab058';
-  ctx.beginPath();ctx.ellipse(0,82,280,88,0,0,TAU);ctx.fill();
+  ctx.beginPath();ctx.ellipse(0,84,290,92,0,0,TAU);ctx.fill();
   // path
   ctx.fillStyle='#e8d9b8';RR(-70,40,140,130,10);ctx.fill();
-  // main hall (cute brown church)
-  ctx.fillStyle=gradC(0,-160,20,200,'#d9b07c','#b9834f');
-  RR(-200,-280,400,240,14);ctx.fill();
-  ctx.strokeStyle='#fff';ctx.lineWidth=8;RR(-200,-280,400,240,14);ctx.stroke();
+  // central hall
+  ctx.fillStyle=gradC(0,-150,20,190,'#d9b07c','#b9834f');
+  RR(-170,-270,340,230,14);ctx.fill();
+  ctx.strokeStyle='#fff';ctx.lineWidth=8;RR(-170,-270,340,230,14);ctx.stroke();
   // brick lines
   ctx.strokeStyle='rgba(140,90,50,.25)';ctx.lineWidth=2;
-  for(let by=-240;by<-40;by+=28){ctx.beginPath();ctx.moveTo(-196,by);ctx.lineTo(196,by);ctx.stroke();}
-  // roof
+  for(let by=-230;by<-40;by+=28){ctx.beginPath();ctx.moveTo(-166,by);ctx.lineTo(166,by);ctx.stroke();}
+  // hall roof
   ctx.fillStyle='#8a5a3a';
-  ctx.beginPath();ctx.moveTo(-225,-278);ctx.lineTo(0,-360);ctx.lineTo(225,-278);ctx.closePath();ctx.fill();
+  ctx.beginPath();ctx.moveTo(-180,-268);ctx.lineTo(0,-330);ctx.lineTo(180,-268);ctx.closePath();ctx.fill();
   ctx.strokeStyle='#fff';ctx.lineWidth=6;
-  ctx.beginPath();ctx.moveTo(-225,-278);ctx.lineTo(0,-360);ctx.lineTo(225,-278);ctx.stroke();
-  // steeple
-  ctx.fillStyle=gradC(0,-460,15,120,'#e0bb85','#bd8a54');
-  RR(-58,-560,116,210,10);ctx.fill();
-  ctx.strokeStyle='#fff';ctx.lineWidth=7;RR(-58,-560,116,210,10);ctx.stroke();
-  ctx.fillStyle='#8a5a3a';
-  ctx.beginPath();ctx.moveTo(-70,-558);ctx.lineTo(0,-640);ctx.lineTo(70,-558);ctx.closePath();ctx.fill();
-  // RED CROSS (main, like reference)
-  const gl=0.5+0.5*Math.sin(t/400);
-  ctx.save();ctx.shadowColor='#ff8a8a';ctx.shadowBlur=18+14*gl;
-  ctx.fillStyle='#e83a3a';
-  RR(-11,-730,22,72,6);ctx.fill();RR(-32,-708,64,20,6);ctx.fill();
-  ctx.restore();
-  // second small red cross on hall roof
-  ctx.fillStyle='#e83a3a';
-  RR(140,-404,14,46,4);ctx.fill();RR(128,-392,38,13,4);ctx.fill();
-  // rose window on steeple
-  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(0,-455,32,0,TAU);ctx.fill();
-  ctx.fillStyle='#ffd93d';ctx.beginPath();ctx.arc(0,-455,23,0,TAU);ctx.fill();
-  ctx.fillStyle='#ff9a3d';
-  for(let i=0;i<8;i++){const a=i/8*TAU;ctx.beginPath();ctx.arc(Math.cos(a)*12,-455+Math.sin(a)*12,4.6,0,TAU);ctx.fill();}
-  // arched glowing windows
-  for(let i=-2;i<=2;i++){
-    const wx=i*76;
-    ctx.fillStyle='#fff';RR(wx-30,-240,60,110,28);ctx.fill();
-    ctx.fillStyle=gradC(wx,-185,5,50,'#fff3b0','#ffbf3d');
-    RR(wx-22,-232,44,94,22);ctx.fill();
+  ctx.beginPath();ctx.moveTo(-180,-268);ctx.lineTo(0,-330);ctx.lineTo(180,-268);ctx.stroke();
+  // TWIN TOWERS with red crosses (like the reference image)
+  for(const s of[-1,1]){
+    const tx=s*215;
+    ctx.fillStyle=gradC(tx,-420,15,120,'#e0bb85','#bd8a54');
+    RR(tx-52,-560,104,300,10);ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=7;RR(tx-52,-560,104,300,10);ctx.stroke();
+    // spire
+    ctx.fillStyle='#5a7a9c';
+    ctx.beginPath();ctx.moveTo(tx-62,-558);ctx.lineTo(tx,-650);ctx.lineTo(tx+62,-558);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=5;
+    ctx.beginPath();ctx.moveTo(tx-62,-558);ctx.lineTo(tx,-650);ctx.lineTo(tx+62,-558);ctx.stroke();
+    // RED CROSS on each tower
+    const gl=0.5+0.5*Math.sin(t/400+s*2);
+    ctx.save();ctx.shadowColor='#ff8a8a';ctx.shadowBlur=18+14*gl;
+    ctx.fillStyle='#e83a3a';
+    RR(tx-10,-722,20,66,6);ctx.fill();RR(tx-29,-702,58,18,6);ctx.fill();
+    ctx.restore();
+    // tower arched window (glowing)
+    ctx.fillStyle='#fff';RR(tx-24,-480,48,90,22);ctx.fill();
+    ctx.fillStyle=gradC(tx,-435,5,40,'#fff3b0','#ffbf3d');
+    RR(tx-17,-473,34,76,17);ctx.fill();
+    // clock
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(tx,-520,16,0,TAU);ctx.fill();
+    ctx.strokeStyle='#8a5a3a';ctx.lineWidth=3;ctx.beginPath();ctx.arc(tx,-520,16,0,TAU);ctx.stroke();
+    ctx.strokeStyle='#333';ctx.lineWidth=2.4;
+    ctx.beginPath();ctx.moveTo(tx,-520);ctx.lineTo(tx,-530);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(tx,-520);ctx.lineTo(tx+7,-516);ctx.stroke();
+  }
+  // hall arched windows (glowing)
+  for(let i=-1;i<=1;i++){
+    const wx=i*90;
+    ctx.fillStyle='#fff';RR(wx-30,-220,60,105,28);ctx.fill();
+    ctx.fillStyle=gradC(wx,-167,5,48,'#fff3b0','#ffbf3d');
+    RR(wx-22,-212,44,89,22);ctx.fill();
     ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=3;
-    ctx.beginPath();ctx.moveTo(wx,-232);ctx.lineTo(wx,-138);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(wx-22,-185);ctx.lineTo(wx+22,-185);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(wx,-212);ctx.lineTo(wx,-123);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(wx-22,-167);ctx.lineTo(wx+22,-167);ctx.stroke();
   }
   // arched double door
   ctx.fillStyle='#fff';RR(-56,-140,112,100,40);ctx.fill();
@@ -694,10 +702,10 @@ function drawChurch(px,py,t){
   ctx.beginPath();ctx.moveTo(0,-130);ctx.lineTo(0,-40);ctx.stroke();
   CIR(-20,-85,5,'#ffd93d');CIR(20,-85,5,'#ffd93d');
   // sign
-  ctx.fillStyle='#fff';RR(-112,-332,224,48,24);ctx.fill();
-  ctx.strokeStyle='#e83a3a';ctx.lineWidth=4;RR(-112,-332,224,48,24);ctx.stroke();
+  ctx.fillStyle='#fff';RR(-112,-318,224,48,24);ctx.fill();
+  ctx.strokeStyle='#e83a3a';ctx.lineWidth=4;RR(-112,-318,224,48,24);ctx.stroke();
   ctx.fillStyle='#e83a3a';ctx.font='bold 27px sans-serif';ctx.textAlign='center';
-  ctx.fillText('⛪ 명성교회',0,-300);
+  ctx.fillText('⛪ 명성교회',0,-286);
   ctx.restore();
 }
 
@@ -964,6 +972,69 @@ function drawPastor(pt,camX,camY,t){
     ctx.font='34px sans-serif';
     ctx.fillText('🙌',x,y-88-Math.sin(pt.hiT*10)*4);
   }
+}
+
+/* 예수님 - 교회에 계시며 대신 싸워주심 */
+function drawJesus(jx,jy,camX,camY,t,active){
+  const x=jx-camX,y=jy-camY;
+  ELL(x,y+24,22,8,'rgba(0,0,0,.28)');
+  const bob=Math.sin(t/250)*2;
+  ctx.save();ctx.translate(x,y+bob);
+  // halo
+  ctx.save();ctx.shadowColor='#ffe27a';ctx.shadowBlur=16;
+  ctx.strokeStyle='#ffd93d';ctx.lineWidth=4;
+  ctx.beginPath();ctx.ellipse(0,-56,16,6,-0.2,0,TAU);ctx.stroke();
+  ctx.restore();
+  // white robe
+  ctx.fillStyle='#f8f4ec';
+  ctx.beginPath();ctx.moveTo(-15,-16);ctx.lineTo(15,-16);ctx.lineTo(20,20);ctx.lineTo(-20,20);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#d8cbb2';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(-15,-16);ctx.lineTo(15,-16);ctx.lineTo(20,20);ctx.lineTo(-20,20);ctx.closePath();ctx.stroke();
+  // red sash
+  ctx.fillStyle='#d93a3a';
+  ctx.beginPath();ctx.moveTo(-4,-16);ctx.lineTo(6,-16);ctx.lineTo(-2,20);ctx.lineTo(-12,20);ctx.closePath();ctx.fill();
+  // sandals
+  ELL(-7,21,6,4,'#8a6a42');ELL(7,21,6,4,'#8a6a42');
+  // arms
+  const wv=Math.sin(t/300)*2;
+  ctx.fillStyle='#f8f4ec';
+  if(active){
+    ctx.save();ctx.translate(-13,-10);ctx.rotate(-0.7);
+    RR(-4,-4,8,20,4);ctx.fill();CIR(0,-6,4.5,'#ffd9b3');ctx.restore();
+    ctx.save();ctx.translate(13,-10);ctx.rotate(0.7);
+    RR(-4,-4,8,20,4);ctx.fill();CIR(0,-6,4.5,'#ffd9b3');ctx.restore();
+  }else{
+    ELL(-15,-8+wv*0.3,5.5,8,'#f8f4ec');ELL(15,-8-wv*0.3,5.5,8,'#f8f4ec');
+    CIR(-15,-1+wv*0.3,4,'#ffd9b3');CIR(15,-1-wv*0.3,4,'#ffd9b3');
+  }
+  // head
+  ctx.fillStyle='#ffd9b3';ctx.beginPath();ctx.arc(0,-34,16,0,TAU);ctx.fill();
+  // brown wavy hair
+  ctx.fillStyle='#6b4226';
+  ctx.beginPath();ctx.arc(0,-37,16.5,Math.PI*0.9,Math.PI*2.1);ctx.fill();
+  CIR(-15,-28,6,'#6b4226');CIR(15,-28,6,'#6b4226');
+  // beard
+  ctx.fillStyle='#6b4226';
+  ctx.beginPath();ctx.ellipse(0,-24,10,8,0,0,TAU);ctx.fill();
+  ctx.fillStyle='#ffd9b3';
+  ctx.beginPath();ctx.ellipse(0,-28,5,3.5,0,0,TAU);ctx.fill();
+  // happy closed eyes
+  ctx.strokeStyle='#333';ctx.lineWidth=2.2;ctx.lineCap='round';
+  for(const s of[-1,1]){
+    ctx.beginPath();ctx.arc(s*6.5,-35,3.2,Math.PI*1.15,Math.PI*1.85);ctx.stroke();
+  }
+  // smile
+  ctx.strokeStyle='#5c2a1a';ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(0,-27,4,0.4,Math.PI-0.4);ctx.stroke();
+  // rosy cheeks
+  CIR(-11,-30,2.8,'rgba(255,120,150,.45)');CIR(11,-30,2.8,'rgba(255,120,150,.45)');
+  ctx.restore();
+  // name tag
+  ctx.font='bold 12px sans-serif';ctx.textAlign='center';
+  const label='예수님';
+  const tw=ctx.measureText(label).width;
+  ctx.fillStyle='rgba(10,14,28,.75)';RR(x-tw/2-10,y-78,tw+20,22,11);ctx.fill();
+  ctx.fillStyle='#ffe88f';ctx.fillText('✝️ '+label,x,y-63);
 }
 
 /* pigeon enemies */
@@ -1402,6 +1473,8 @@ let gameMode='survival',timeLeft=120,score=0,catAnnounced=false;
 let catKills=0,bossCatSpawned=false,endingT=0,endingCat=null;
 let endClouds=[],endPetals=[];
 let magnetAll=0,fruitT=10,prayCd=0,bibleUsed=false,pastorT=25;
+const CHURCH=LANDMARKS.find(l=>l.f==='church');
+let jesus={x:CHURCH.x+75,y:CHURCH.y+95,atkT:0};
 
 const WEAPONS={
   quack:  {name:'📖 말씀의 검',icon:'📖',max:5,desc:'말씀의 검 자동 발사'},
@@ -1576,7 +1649,7 @@ function boomParts(x,y,col,n){
   }
 }
 function hurtPlayer(dmg){
-  if(player.hurtT>0||state!=='play'||player._invT>0)return;
+  if(player.hurtT>0||state!=='play'||player._invT>0||player._inChurch)return;
   player.hp-=dmg;player.hurtT=0.5;shake=Math.max(shake,5);sHurt();
   boomParts(player.x,player.y,'#ff4757',8);
   if(player.hp<=0){player.hp=0;gameOver();}
@@ -1945,6 +2018,29 @@ function update(dt,t){
   const wv=Math.floor(gameT/60);
   if(wv>waveN){waveN=wv;waveBanner('🌊 '+wv+T('wave_n'));}
 
+  // 교회: 들어오면 언제나 안전, 예수님이 대신 싸워주심
+  {
+    const cdx=p.x-CHURCH.x,cdy=p.y-CHURCH.y;
+    const inChurch=(cdx*cdx+cdy*cdy)<CHURCH.br*CHURCH.br;
+    if(inChurch&&!p._wasInChurch){
+      waveBanner('✝️ 예수님이 지켜주세요!');
+      boomParts(p.x,p.y,'#ffe27a',18);
+      sLv();
+    }
+    p._wasInChurch=inChurch;p._inChurch=inChurch;
+    jesus.atkT-=dt;
+    if(inChurch&&jesus.atkT<=0){
+      const tgt=nearestEnemy(jesus.x,jesus.y,460);
+      if(tgt){
+        jesus.atkT=0.9;
+        ltns.push({x1:jesus.x,y1:jesus.y-40,x2:tgt.x,y2:tgt.y,t:0.22,holy:true});
+        const ka=Math.atan2(tgt.y-jesus.y,tgt.x-jesus.x);
+        damageEnemy(tgt,70+gameT*0.2,Math.cos(ka)*120,Math.sin(ka)*120);
+        boomParts(tgt.x,tgt.y,'#ffe27a',10);
+        sZap();
+      }else jesus.atkT=0.25;
+    }
+  }
   // enemies
   for(let i=enemies.length-1;i>=0;i--){
     const fe=enemies[i];
@@ -2162,6 +2258,11 @@ function render(t){
     const px2=pt.x-camX,py2=pt.y-camY;
     if(px2>-80&&px2<LW+80&&py2>-100&&py2<LH+100)drawPastor(pt,camX,camY,t);
   }
+  // Jesus at the church
+  {
+    const jx=jesus.x-camX,jy=jesus.y-camY;
+    if(jx>-80&&jx<LW+80&&jy>-100&&jy<LH+100)drawJesus(jesus.x,jesus.y,camX,camY,t,!!player._inChurch);
+  }
   // ghibli clouds & petals (behind actors)
   if(state==='ending'){
     for(const cl of endClouds){
@@ -2244,6 +2345,11 @@ function render(t){
       ctx.strokeStyle='rgba(255,80,80,.9)';ctx.lineWidth=l.w;ctx.lineCap='round';
       ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
       ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    }else if(l.holy){
+      ctx.strokeStyle='rgba(255,215,80,.95)';ctx.lineWidth=6;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+      ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=2.5;
       ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
     }else{
       ctx.strokeStyle='rgba(140,220,255,.95)';ctx.lineWidth=3.5;ctx.lineCap='round';
